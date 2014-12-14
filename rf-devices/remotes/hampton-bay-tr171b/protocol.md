@@ -45,7 +45,7 @@
 
 Bit Position | Function of bit when true (1)
 -------------|------------------------------
-Bit 0        | Light on/off or dim mode
+Bit 0        | Set light to dim mode
 Bit 1        | Set fan speed to 3
 Bit 2        | Set fan speed to 2
 Bit 3        | Set fan speed to 1
