@@ -1,27 +1,28 @@
-# Copyright 2013-2014 Clayton Smith
-#
-# This file is part of sdr-examples
-#
-# sdr-examples is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# sdr-examples is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with sdr-examples; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+::
+
+ # Copyright 2013-2014 Clayton Smith
+ #
+ # This file is part of sdr-examples
+ #
+ # sdr-examples is free software; you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3, or (at your option)
+ # any later version.
+ #
+ # sdr-examples is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with sdr-examples; see the file COPYING.  If not, write to
+ # the Free Software Foundation, Inc., 51 Franklin Street,
+ # Boston, MA 02110-1301, USA.
 
 sdr-examples
 ============
 
-Author: Clayton Smith
-Email: <argilo@gmail.com>
+Author: Clayton Smith (argilo@gmail.com)
 
 This project is a collection of GNU Radio examples created for a
 tutorial session given at the Ottawa Amateur Radio Club.
@@ -122,3 +123,64 @@ requires USB 3.0 to work properly, while the second example,
 atsc-blade-usb2.py reduces the output sample rate so as to run on a
 USB 2.0 port.  Both examples transmit on 438-444 MHz, but this can be
 changed by adjusting the center_freq variable.
+
+
+Making Bootable USB Images for GNURadio
+=======================================
+
+
+Install Some Kind of Ubuntu/Debian
+----------------------------------
+
+Install Xubuntu 14.04 LTS 64-bit (or newer) onto a 8 GB or larger flash drive.
+Force the root partition to be 7.5 GB so that it can be installed on
+*approximately* 8 GB drives that may vary in size a bit.
+
+Boot Xubuntu, install updates and restart.
+
+In /etc/default/rcS, set "UTC=no" so it won't mess up the system clock on
+Windows laptops.
+
+Install a few essential pieces in order to make it easier for people to use
+the system and work with these example flow graphs::
+
+    sudo apt-get install linux-firmware-nonfree
+
+    sudo apt-get install git
+    git clone --recursive https://github.com/argilo/sdr-examples.git
+
+
+Install GNURadio and Related Tools
+----------------------------------
+
+Install the core GNURadio packages::
+
+    sudo add-apt-repository ppa:gqrx/releases
+    sudo apt-get update
+    sudo apt-get install gnuradio gnuradio-dev gnuradio-doc gqrx-sdr
+
+Install drivers for some of the most common SDR dongles::
+
+    sudo apt-get install rtl-sdr hackrf bladerf-host \
+        gr-fcdproplus qthid-fcd-controller
+
+Add GRC and gqrx to the favourites in the xfce menu.
+
+
+Compress Bootable Image
+-----------------------
+
+Purge old kernels.
+
+::
+
+    sudo apt-get install localepurge
+    sudo apt-get clean
+    cat /dev/zero > zero.fill ; sync ; sleep 1 ; sync ; rm -rf zero.fill
+
+Shut down.
+
+::
+
+    sudo dd if=/dev/sdb bs=1M count=7500 |\
+        gzip --rsyncable > bootable_image.img.gz
